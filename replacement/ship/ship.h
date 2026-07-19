@@ -9,6 +9,15 @@
 #include "msl/bits.h"
 #include "msl/fwcounter.h"
 
+// Hardware budget for the 2 MB / 16-way / 2048-set LLC simulated here,
+// fitting the 32 KB budget used for all non-LRU policies:
+//   RRPV:    32768 lines x 2 bits                               =  8.00 KB
+//   SHCT:    16384 entries x 3 bits                             =  6.00 KB
+//   Sampler: 256 sets x 16 ways = 4096 entries x (1 valid
+//            + 1 used + 16 tag + 14 PC signature + 4 LRU) bits  = 18.00 KB
+//   Total                                                       = 32.00 KB
+// (The simulator stores full addresses/PCs for convenience; the widths above
+// are the hardware-equivalent field sizes the policy relies on.)
 struct ship : public champsim::modules::replacement {
 private:
   int& get_rrpv(long set, long way);
